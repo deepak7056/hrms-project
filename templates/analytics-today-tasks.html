@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Today Task Details - HRMS Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <!-- Header -->
+  <header
+    class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-10 py-4 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+        <i class="fas fa-building text-white text-lg"></i>
+      </div>
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">
+        INDIA COE TOOL</h1>
+    </div>
+    <div class="flex items-center gap-4">
+  <div class="text-right">
+    <p class="text-sm font-medium text-gray-700">Welcome Back</p>
+    <p class="text-xs text-gray-500">{{ user.get_full_name|default:user.username }} - {{ user.get_role_display|default:'User' }}</p>
+  </div>
+  <img src="{% static 'images/download.jpg' %}" alt="Profile" class="rounded-full w-10 h-10 border-2 border-blue-200 shadow-md" />
+</div>
+  </header>
+
+  <div class="flex pt-20 min-h-screen">
+    <!-- Sidebar -->
+    <aside
+      class="w-64 bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white p-6 flex flex-col justify-between shadow-2xl">
+      <div>
+        <nav class="space-y-3 text-base">
+          <a href="{% url 'index' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200 bg-white/5">
+            <i class="fas fa-tachometer-alt w-5"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="{% url 'today_reports' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-home w-5"></i>
+            <span>Today Reports</span>
+          </a>
+          <a href="{% url 'analytics' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-chart-bar w-5"></i>
+            <span>Analytics Today Tasks</span>
+          </a>
+          <a href="{% url 'leave_list' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-users w-5"></i>
+            <span>Apply Leave</span>
+          </a>
+          {% if user.role == 'admin' %}
+      <a href="{% url 'upload_report' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+        <i class="fas fa-upload w-5"></i>
+        <span>Upload Report</span>
+      </a>
+      {% endif %}
+        </nav>
+      </div>
+      <div class="text-sm text-blue-200 border-t border-blue-700 pt-4">
+        <p>© 2025 HRMS v2.0</p>
+        <p class="text-xs opacity-75">Enhanced Dashboard</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-6">
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">Analytics Today Task Details</h1>
+          <p class="text-gray-600">Your assigned reports and tasks</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-tasks text-blue-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800" id="totalTasks">0</p>
+                <p class="text-sm text-gray-600">Total Tasks</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800" id="pendingTasks">0</p>
+                <p class="text-sm text-gray-600">Pending</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800" id="completedTasks">0</p>
+                <p class="text-sm text-gray-600">Completed</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-play-circle text-purple-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800" id="inProgressTasks">0</p>
+                <p class="text-sm text-gray-600">In Progress</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add this after the stats cards and before the table -->
+<div class="flex justify-end gap-4 mb-4">
+  <button onclick="startAllTasks()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+    <i class="fas fa-play-circle"></i>
+    Start All Pending
+  </button>
+  <button onclick="endAllTasks()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+    <i class="fas fa-stop-circle"></i>
+    End All In Progress
+  </button>
+</div>
+
+        <!-- Tasks Table -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+  <div class="overflow-x-auto" style="max-height: calc(100vh - 300px); overflow-y: auto;">
+    <table class="w-full">
+      <thead id="taskTableHeader" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white sticky top-0 z-10">
+        <!-- Headers will be populated dynamically -->
+      </thead>
+      <tbody id="tasksTableBody" class="divide-y divide-gray-200 bg-white">
+        <!-- Table rows will be populated here -->
+      </tbody>
+    </table>
+    
+    <!-- Empty State -->
+    <div id="emptyState" class="text-center py-12 hidden">
+      <i class="fas fa-clipboard-list text-6xl text-gray-300 mb-4"></i>
+      <p class="text-gray-500">No tasks assigned yet.</p>
+      <a href="{% url 'today_reports' %}" class="inline-block mt-4 text-blue-600 hover:text-blue-800">
+        <i class="fas fa-arrow-left mr-2"></i>Go to Today Reports
+      </a>
+    </div>
+  </div>
+</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Status Update Message -->
+  <div id="statusMessage"
+    class="hidden fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300">
+    <i class="fas fa-info-circle mr-2"></i>
+    <span id="statusText"></span>
+  </div>
+
+  <script src="{% static 'js/auth.js' %}"></script>
+
+
+  <script>
+  const tasks = {{ my_tasks|safe|default:"[]" }};
+  const columns = {{ columns|safe|default:"[]" }};
+  const stats = {{ stats|safe|default:"{}" }};
+  
+  // Display my tasks from Django
+  function displayMyTasks() {
+    const tableHeader = document.getElementById('taskTableHeader');
+    const tableBody = document.getElementById('tasksTableBody');
+    const emptyState = document.getElementById('emptyState');
+    
+    // Update stats
+    updateStats();
+    
+    if (tasks.length === 0) {
+      emptyState.classList.remove('hidden');
+      tableHeader.innerHTML = '';
+      tableBody.innerHTML = '';
+      return;
+    }
+    
+    emptyState.classList.add('hidden');
+    
+    // Create headers
+    tableHeader.innerHTML = `
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">S.No</th>
+        ${columns.map(col => `<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">${col}</th>`).join('')}
+        <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Status</th>
+        <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Action</th>
+      </tr>
+    `;
+    
+    // Create rows
+    tableBody.innerHTML = tasks.map((task, index) => {
+      const statusBadge = getStatusBadge(task.status);
+      const actionButtons = getActionButtons(task);
+      
+      return `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
+          ${task.values.map(value => `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${value || '-'}</td>
+          `).join('')}
+          <td class="px-6 py-4 whitespace-nowrap text-center">
+            ${statusBadge}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center">
+            ${actionButtons}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+  
+  // Get status badge HTML
+  function getStatusBadge(status) {
+    const badges = {
+      'pending': '<span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>',
+      'in_progress': '<span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">In Progress</span>',
+      'completed': '<span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Completed</span>'
+    };
+    return badges[status] || badges['pending'];
+  }
+  
+  // Get action buttons based on status
+  function getActionButtons(task) {
+    if (task.status === 'pending') {
+      return `
+        <button onclick="startTask(${task.id})" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">
+          <i class="fas fa-play mr-1"></i>Start
+        </button>
+      `;
+    } else if (task.status === 'in_progress') {
+      return `
+        <button onclick="endTask(${task.id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">
+          <i class="fas fa-stop mr-1"></i>End
+        </button>
+      `;
+    } else {
+      return `
+        <span class="text-gray-500 text-sm">
+          <i class="fas fa-check-circle mr-1"></i>Completed
+        </span>
+      `;
+    }
+  }
+  
+  // Start individual task
+  function startTask(taskId) {
+    fetch(`/tasks/start/${taskId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showStatusMessage(data.message, 'green');
+        window.location.reload();
+      } else {
+        showStatusMessage(data.message, 'red');
+      }
+    });
+  }
+  
+  // End individual task
+  function endTask(taskId) {
+    fetch(`/tasks/end/${taskId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showStatusMessage(data.message, 'green');
+        window.location.reload();
+      } else {
+        showStatusMessage(data.message, 'red');
+      }
+    });
+  }
+  
+  // Start all pending tasks
+  function startAllTasks() {
+    if (!confirm('Start all pending tasks?')) return;
+    
+    fetch('/tasks/start-all/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showStatusMessage(data.message, 'green');
+        window.location.reload();
+      } else {
+        showStatusMessage(data.message, 'red');
+      }
+    });
+  }
+  
+  // End all in-progress tasks
+  function endAllTasks() {
+    if (!confirm('End all in-progress tasks?')) return;
+    
+    fetch('/tasks/end-all/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showStatusMessage(data.message, 'green');
+        window.location.reload();
+      } else {
+        showStatusMessage(data.message, 'red');
+      }
+    });
+  }
+  
+  // Update statistics
+  function updateStats() {
+    document.getElementById('totalTasks').textContent = stats.total || 0;
+    document.getElementById('pendingTasks').textContent = stats.pending || 0;
+    document.getElementById('inProgressTasks').textContent = stats.in_progress || 0;
+    document.getElementById('completedTasks').textContent = stats.completed || 0;
+  }
+  
+  // Show status message
+  function showStatusMessage(message, color) {
+    const statusDiv = document.getElementById('statusMessage');
+    const statusText = document.getElementById('statusText');
+    
+    statusText.textContent = message;
+    statusDiv.className = `fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300 bg-${color}-500`;
+    statusDiv.classList.remove('hidden');
+    
+    setTimeout(() => {
+      statusDiv.classList.add('hidden');
+    }, 3000);
+  }
+  
+  // Get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    displayMyTasks();
+  });
+</script>
+</body>
+
+</html>

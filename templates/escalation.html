@@ -1,0 +1,417 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRMS Dashboard - Escalation Details</title>
+   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-10 py-4 bg-white shadow-lg border-b border-blue-100">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+        <i class="fas fa-building text-white text-lg"></i>
+      </div>
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">INDIA COE TOOL</h1>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <p class="text-sm font-medium text-gray-700">Welcome Back</p>
+        <p class="text-xs text-gray-500">Administrator</p>
+      </div>
+      <img src="https://via.placeholder.com/40" alt="Profile" class="rounded-full w-10 h-10 border-2 border-blue-200 shadow-md" />
+    </div>
+  </header>
+
+  <div class="flex pt-0 min-h-screen">
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-16 bottom-0 w-64 bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white p-6 flex flex-col justify-between shadow-2xl z-30">
+      <div>
+        <nav class="space-y-3 text-base">
+          <a href="index.html"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200 bg-white/5">
+            <i class="fas fa-tachometer-alt w-5"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="escalation.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-exclamation-triangle w-5"></i>
+            <span>Escalation</span>
+          </a>
+          <a href="today-reports.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-home w-5"></i>
+            <span>Today Reports</span>
+          </a>
+          <a href="analytics-today-tasks.html"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-chart-bar w-5"></i>
+            <span>Analytics Today Tasks</span>
+          </a>
+          <a href="leave.html"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-users w-5"></i>
+            <span>Apply Leave</span>
+          </a>
+        </nav>
+      </div>
+      <div class="text-sm text-blue-200 border-t border-blue-700 pt-4">
+        <p>© 2025 HRMS v2.0</p>
+        <p class="text-xs opacity-75">Enhanced Dashboard</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-8 overflow-y-auto">
+      <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8 flex justify-between items-center">
+          <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-2">Escalation Details</h1>
+            <p class="text-gray-600">Manage and track escalation records</p>
+          </div>
+          <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            <span>Add Escalation</span>
+          </button>
+        </div>
+
+        <!-- Escalation Table -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <tr>
+                  <th class="px-6 py-4 text-left text-sm font-semibold">Sr No</th>
+                  <th class="px-6 py-4 text-left text-sm font-semibold">Esc Received Date</th>
+                  <th class="px-6 py-4 text-left text-sm font-semibold">Esc By</th>
+                  <th class="px-6 py-4 text-left text-sm font-semibold">Esc To</th>
+                  <th class="px-6 py-4 text-left text-sm font-semibold">Esc Desc</th>
+                </tr>
+              </thead>
+              <tbody id="escalationTableBody" class="divide-y divide-gray-200">
+                <!-- Table rows will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- View/Edit Modal -->
+  <div id="viewModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-2xl relative shadow-2xl border border-gray-100 transform transition-all duration-300 scale-95 opacity-0 max-h-screen overflow-y-auto" id="viewModalContent">
+      <button onclick="closeViewModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-all duration-200">&times;</button>
+      
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-2">Escalation Details</h2>
+        <p class="text-gray-600">View escalation information</p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
+            <p id="viewSrNo" class="text-gray-900 font-semibold"></p>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Received Date</label>
+            <p id="viewDate" class="text-gray-900 font-semibold"></p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Escalated By</label>
+            <p id="viewEscBy" class="text-gray-900 font-semibold"></p>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Escalated To</label>
+            <p id="viewEscTo" class="text-gray-900 font-semibold"></p>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <p id="viewDesc" class="text-gray-900"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="addModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-2xl relative shadow-2xl border border-gray-100 transform transition-all duration-300 scale-95 opacity-0 max-h-screen overflow-y-auto" id="addModalContent">
+      <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-all duration-200">&times;</button>
+      
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-2">Add Escalation</h2>
+        <p class="text-gray-600">Create new escalation record</p>
+      </div>
+
+      <form id="escalationForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="escalatedBy" class="block text-sm font-medium text-gray-700 mb-2">Escalated By <span class="text-red-500">*</span></label>
+            <select id="escalatedBy" name="escalatedBy" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+              <option value="">Select</option>
+              <option value="Aftab">Aftab</option>
+              <option value="Kishan">Kishan</option>
+              <option value="Prahlad">Prahlad</option>
+              <option value="Ram">Ram</option>
+              <option value="Ranjeet">Ranjeet</option>
+              <option value="Saurabh">Saurabh</option>
+              <option value="Sunil">Sunil</option>
+              <option value="Vivek">Vivek</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="escalatedTo" class="block text-sm font-medium text-gray-700 mb-2">Escalated To <span class="text-red-500">*</span></label>
+            <select id="escalatedTo" name="escalatedTo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+              <option value="">Select</option>
+              <option value="Aftab">Aftab</option>
+              <option value="Kishan">Kishan</option>
+              <option value="Prahlad">Prahlad</option>
+              <option value="Ram">Ram</option>
+              <option value="Ranjeet">Ranjeet</option>
+              <option value="Saurabh">Saurabh</option>
+              <option value="Sunil">Sunil</option>
+              <option value="Vivek">Vivek</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="escalationDate" class="block text-sm font-medium text-gray-700 mb-2">Escalation Date <span class="text-red-500">*</span></label>
+          <input type="date" id="escalationDate" name="escalationDate" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description <span class="text-red-500">*</span></label>
+          <textarea id="description" name="description" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none" placeholder="Enter escalation description..."></textarea>
+        </div>
+
+        <div class="flex justify-end gap-4 pt-4 border-t border-gray-200">
+          <button type="button" onclick="resetForm()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200">
+            <i class="fas fa-undo mr-2"></i>Reset
+          </button>
+          <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+            <i class="fas fa-save mr-2"></i>Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Sample escalation data
+    let escalations = [
+      {
+        id: 1,
+        srNo: 1,
+        date: '2025-01-15',
+        escalatedBy: 'Aftab',
+        escalatedTo: 'Kishan',
+        description: 'System performance issue requiring immediate attention'
+      },
+      {
+        id: 2,
+        srNo: 2,
+        date: '2025-01-20',
+        escalatedBy: 'Ram',
+        escalatedTo: 'Saurabh',
+        description: 'Client complaint about service delivery delays'
+      },
+      {
+        id: 3,
+        srNo: 3,
+        date: '2025-01-25',
+        escalatedBy: 'Vivek',
+        escalatedTo: 'Prahlad',
+        description: 'Security vulnerability found in authentication module'
+      },
+      {
+        id: 4,
+        srNo: 4,
+        date: '2025-02-01',
+        escalatedBy: 'Sunil',
+        escalatedTo: 'Ranjeet',
+        description: 'Budget approval needed for new project requirements'
+      },
+      {
+        id: 5,
+        srNo: 5,
+        date: '2025-02-05',
+        escalatedBy: 'Kishan',
+        escalatedTo: 'Aftab',
+        description: 'Team resource allocation conflict needs resolution'
+      }
+    ];
+
+    let nextId = 6;
+
+    function renderTable() {
+      const tbody = document.getElementById('escalationTableBody');
+      tbody.innerHTML = '';
+
+      escalations.forEach(escalation => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-blue-50 cursor-pointer transition-colors duration-200';
+        row.onclick = () => openViewModal(escalation.id);
+        
+        row.innerHTML = `
+          <td class="px-6 py-4 text-sm text-gray-900 font-medium">${escalation.srNo}</td>
+          <td class="px-6 py-4 text-sm text-gray-900">${formatDate(escalation.date)}</td>
+          <td class="px-6 py-4 text-sm text-gray-900">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              ${escalation.escalatedBy}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-900">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+              ${escalation.escalatedTo}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-900">
+            <div class="max-w-xs truncate">${escalation.description}</div>
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    function openViewModal(id) {
+      const escalation = escalations.find(e => e.id === id);
+      if (!escalation) return;
+
+      document.getElementById('viewSrNo').textContent = escalation.srNo;
+      document.getElementById('viewDate').textContent = formatDate(escalation.date);
+      document.getElementById('viewEscBy').textContent = escalation.escalatedBy;
+      document.getElementById('viewEscTo').textContent = escalation.escalatedTo;
+      document.getElementById('viewDesc').textContent = escalation.description;
+
+      const modal = document.getElementById('viewModal');
+      const modalContent = document.getElementById('viewModalContent');
+      
+      modal.classList.remove('hidden');
+      
+      setTimeout(() => {
+        modalContent.style.transform = 'scale(1)';
+        modalContent.style.opacity = '1';
+      }, 10);
+    }
+
+    function closeViewModal() {
+      const modal = document.getElementById('viewModal');
+      const modalContent = document.getElementById('viewModalContent');
+      
+      modalContent.style.transform = 'scale(0.95)';
+      modalContent.style.opacity = '0';
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    function openAddModal() {
+      const modal = document.getElementById('addModal');
+      const modalContent = document.getElementById('addModalContent');
+      
+      modal.classList.remove('hidden');
+      
+      setTimeout(() => {
+        modalContent.style.transform = 'scale(1)';
+        modalContent.style.opacity = '1';
+      }, 10);
+    }
+
+    function closeAddModal() {
+      const modal = document.getElementById('addModal');
+      const modalContent = document.getElementById('addModalContent');
+      
+      modalContent.style.transform = 'scale(0.95)';
+      modalContent.style.opacity = '0';
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    function resetForm() {
+      document.getElementById('escalationForm').reset();
+    }
+
+    // Form submission handler
+    document.getElementById('escalationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const newEscalation = {
+        id: nextId++,
+        srNo: escalations.length + 1,
+        date: formData.get('escalationDate'),
+        escalatedBy: formData.get('escalatedBy'),
+        escalatedTo: formData.get('escalatedTo'),
+        description: formData.get('description')
+      };
+
+      escalations.push(newEscalation);
+      renderTable();
+      closeAddModal();
+      resetForm();
+      
+      // Show success message (optional)
+      alert('Escalation added successfully!');
+    });
+
+    // Close modals when clicking outside
+    document.getElementById('viewModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeViewModal();
+      }
+    });
+
+    document.getElementById('addModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddModal();
+      }
+    });
+
+    // Close modals with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (!document.getElementById('viewModal').classList.contains('hidden')) {
+          closeViewModal();
+        }
+        if (!document.getElementById('addModal').classList.contains('hidden')) {
+          closeAddModal();
+        }
+      }
+    });
+
+    // Set today's date as default
+    document.getElementById('escalationDate').valueAsDate = new Date();
+
+    // Initialize table
+    renderTable();
+  </script>
+  <script src="{% static 'js/auth.js' %}"></script>
+  
+</body>
+</html>

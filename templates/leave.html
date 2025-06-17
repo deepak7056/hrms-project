@@ -1,0 +1,580 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRMS - Leave Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <!-- Header -->
+  <header
+    class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-10 py-4 bg-white shadow-lg border-b border-blue-100">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+        <i class="fas fa-building text-white text-lg"></i>
+      </div>
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">INDIA
+        COE TOOL</h1>
+    </div>
+    <div class="flex items-center gap-4">
+  <div class="text-right">
+    <p class="text-sm font-medium text-gray-700">Welcome Back</p>
+    <p class="text-xs text-gray-500">{{ user.get_full_name|default:user.username }} - {{ user.get_role_display|default:'User' }}</p>
+  </div>
+  <img src="{% static 'images/download.jpg' %}" alt="Profile" class="rounded-full w-10 h-10 border-2 border-blue-200 shadow-md" />
+</div>
+  </header>
+
+  <div class="flex pt-20 min-h-screen">
+    <!-- Sidebar -->
+    <aside
+      class="w-64 bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white p-6 flex flex-col justify-between shadow-2xl">
+      <div>
+        <nav class="space-y-3 text-base">
+          <a href="{% url 'index' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200 bg-white/5">
+            <i class="fas fa-tachometer-alt w-5"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="{% url 'today_reports' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-home w-5"></i>
+            <span>Today Reports</span>
+          </a>
+          <a href="{% url 'analytics' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-chart-bar w-5"></i>
+            <span>Analytics Today Tasks</span>
+          </a>
+          <a href="{% url 'leave_list' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-users w-5"></i>
+            <span>Apply Leave</span>
+          </a>
+          {% if user.role == 'admin' %}
+      <a href="{% url 'upload_report' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+        <i class="fas fa-upload w-5"></i>
+        <span>Upload Report</span>
+      </a>
+      {% endif %}
+        </nav>
+      </div>
+      <div class="text-sm text-blue-200 border-t border-blue-700 pt-4">
+        <p>© 2025 HRMS v2.0</p>
+        <p class="text-xs opacity-75">Enhanced Dashboard</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-8">
+          <h1
+            class="text-4xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-2">
+            Leave Details</h1>
+          <p class="text-gray-600">Manage and track employee leave applications</p>
+        </div>
+
+        <!-- Leave Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/50">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-calendar-check text-blue-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800">30</p>
+                <p class="text-sm text-gray-600">Total Leaves</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/50">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800">8.5</p>
+                <p class="text-sm text-gray-600">Consumed</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/50">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-hourglass-half text-yellow-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800">21.5</p>
+                <p class="text-sm text-gray-600">Balance</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/50">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-percentage text-purple-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-800">28%</p>
+                <p class="text-sm text-gray-600">Utilization</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leave Breakdown Table -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 mb-8">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="fas fa-chart-pie text-blue-600"></i>
+              Leave Breakdown
+            </h2>
+          </div>
+          <div class="p-6">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                    <th class="px-4 py-3 text-left font-semibold">Leave Type</th>
+                    <th class="px-4 py-3 text-center font-semibold">Casual Leave</th>
+                    <th class="px-4 py-3 text-center font-semibold">Earned Leave</th>
+                    <th class="px-4 py-3 text-center font-semibold">Sick Leave</th>
+                    <th class="px-4 py-3 text-center font-semibold">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100">
+                    <td class="px-4 py-3 font-medium text-gray-800">Total No Of Leaves</td>
+                    <td class="px-4 py-3 text-center">8</td>
+                    <td class="px-4 py-3 text-center">15</td>
+                    <td class="px-4 py-3 text-center">7</td>
+                    <td class="px-4 py-3 text-center font-bold">30</td>
+                  </tr>
+                  <tr class="border-b border-gray-100 bg-red-50">
+                    <td class="px-4 py-3 font-medium text-gray-800">Consumed</td>
+                    <td class="px-4 py-3 text-center">3.5</td>
+                    <td class="px-4 py-3 text-center">3</td>
+                    <td class="px-4 py-3 text-center">2</td>
+                    <td class="px-4 py-3 text-center font-bold">8.5</td>
+                  </tr>
+                  <tr class="bg-green-50">
+                    <td class="px-4 py-3 font-medium text-gray-800">Balance</td>
+                    <td class="px-4 py-3 text-center">4.5</td>
+                    <td class="px-4 py-3 text-center">12</td>
+                    <td class="px-4 py-3 text-center">5</td>
+                    <td class="px-4 py-3 text-center font-bold">21.5</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leave History Table -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 mb-8">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="fas fa-history text-blue-600"></i>
+              Leave History
+            </h2>
+          </div>
+          <div class="p-6">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                    <th class="px-4 py-3 text-left font-semibold">Start Date</th>
+                    <th class="px-4 py-3 text-left font-semibold">End Date</th>
+                    <th class="px-4 py-3 text-center font-semibold">No of Days</th>
+                    <th class="px-4 py-3 text-left font-semibold">Type</th>
+                    <th class="px-4 py-3 text-center font-semibold">Status</th>
+                    <th class="px-4 py-3 text-left font-semibold">Approver</th>
+                    <th class="px-4 py-3 text-center font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="leaveTableBody">
+                  {% for leave in my_leaves %}
+                  <tr class="border-b border-gray-100 hover:bg-blue-50 transition-colors duration-200">
+                    <td class="px-4 py-3">{{ leave.start_date|date:"d-M-y" }}</td>
+                    <td class="px-4 py-3">{{ leave.end_date|date:"d-M-y" }}</td>
+                    <td class="px-4 py-3 text-center">
+                      {% with days=leave.end_date|timeuntil:leave.start_date %}
+                      {{ days|slice:":2" }}
+                      {% endwith %}
+                    </td>
+                    <td class="px-4 py-3">{{ leave.leave_type.name }}</td>
+                    <td class="px-4 py-3 text-center">
+                      {% if leave.status == 'pending' %}
+                      <span
+                        class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Pending</span>
+                      {% elif leave.status == 'approved' %}
+                      <span
+                        class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Approved</span>
+                      {% else %}
+                      <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Rejected</span>
+                      {% endif %}
+                    </td>
+                    <td class="px-4 py-3">{{ leave.approved_by.get_full_name|default:"Pending" }}</td>
+                    <td class="px-4 py-3 text-center">
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="7" class="text-center py-4 text-gray-500">No leave applications yet</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Apply Leave Section -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50">
+          <div class="p-6 border-b border-gray-200 cursor-pointer" onclick="toggleLeaveForm()">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i class="fas fa-plus-circle text-green-600"></i>
+                Apply Leave Application
+              </span>
+              <i id="formToggleIcon" class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+            </h2>
+          </div>
+          <div id="leaveForm" class="hidden p-6">
+            <form onsubmit="submitLeaveApplication(event)" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Leave Type -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Leave Type *</label>
+                  <select id="leaveType" name="leaveType" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                    <option value="">Select Leave Type</option>
+                    {% for leave_type in leave_types %}
+                    <option value="{{ leave_type.id }}">{{ leave_type.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- From Date -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">From Date *</label>
+                  <input type="date" id="fromDate" name="fromDate" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                </div>
+
+                <!-- To Date -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">To Date *</label>
+                  <input type="date" id="toDate" name="toDate" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                </div>
+
+                <!-- Number of Days (auto-calculated) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Number of Days</label>
+                  <input type="text" id="numberOfDays" name="numberOfDays" readonly
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
+                </div>
+              </div>
+
+              <!-- Reason -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Reason *</label>
+                <textarea id="reason" name="reason" rows="4" required
+                  placeholder="Please provide the reason for your leave application..."
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none"></textarea>
+              </div>
+
+              <!-- Buttons -->
+              <div class="flex gap-4 pt-4">
+                <button type="submit"
+                  class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg">
+                  <i class="fas fa-paper-plane mr-2"></i>
+                  Apply Leave
+                </button>
+                <button type="reset" onclick="resetForm()"
+                  class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-600 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg">
+                  <i class="fas fa-undo mr-2"></i>
+                  Reset
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Manager Approval Section -->
+        {% if team_leaves %}
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 mt-8">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="fas fa-user-check text-orange-600"></i>
+              Pending Approvals
+            </h2>
+          </div>
+          <div class="p-6">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                    <th class="px-4 py-3 text-left font-semibold">Employee</th>
+                    <th class="px-4 py-3 text-left font-semibold">Leave Type</th>
+                    <th class="px-4 py-3 text-center font-semibold">From</th>
+                    <th class="px-4 py-3 text-center font-semibold">To</th>
+                    <th class="px-4 py-3 text-left font-semibold">Reason</th>
+                    <th class="px-4 py-3 text-center font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for leave in team_leaves %}
+                  <tr class="border-b border-gray-100">
+                    <td class="px-4 py-3">{{ leave.employee.get_full_name }}</td>
+                    <td class="px-4 py-3">{{ leave.leave_type.name }}</td>
+                    <td class="px-4 py-3 text-center">{{ leave.start_date|date:"d-M-y" }}</td>
+                    <td class="px-4 py-3 text-center">{{ leave.end_date|date:"d-M-y" }}</td>
+                    <td class="px-4 py-3">{{ leave.reason|truncatewords:10 }}</td>
+                    <td class="px-4 py-3 text-center">
+                      <button onclick="approveLeave({{ leave.id }}, 'approved')"
+                        class="bg-green-500 text-white px-3 py-1 rounded text-sm mr-2">
+                        <i class="fas fa-check"></i> Approve
+                      </button>
+                      <button onclick="approveLeave({{ leave.id }}, 'rejected')"
+                        class="bg-red-500 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-times"></i> Reject
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal"
+    class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div
+      class="bg-white rounded-2xl p-8 w-96 relative shadow-2xl border border-gray-100 transform transition-all duration-300">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-check text-green-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Leave Application Submitted!</h3>
+        <p class="text-gray-600 mb-6">Your leave application has been submitted successfully and is pending approval.
+        </p>
+        <button onclick="closeSuccessModal()"
+          class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle leave form visibility
+    document.addEventListener('DOMContentLoaded', function () {
+      // Toggle leave form visibility
+      function toggleLeaveForm() {
+        const form = document.getElementById('leaveForm');
+        const icon = document.getElementById('formToggleIcon');
+        if (form.classList.contains('hidden')) {
+          form.classList.remove('hidden');
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          form.classList.add('hidden');
+          icon.style.transform = 'rotate(0deg)';
+        }
+      }
+      window.toggleLeaveForm = toggleLeaveForm;
+
+      // Calculate number of days
+      function calculateDays() {
+        const fromDate = document.getElementById('fromDate').value;
+        const toDate = document.getElementById('toDate').value;
+        if (fromDate && toDate) {
+          const from = new Date(fromDate);
+          const to = new Date(toDate);
+          const timeDiff = to.getTime() - from.getTime();
+          const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+          document.getElementById('numberOfDays').value = dayDiff > 0 ? dayDiff : 0;
+        }
+      }
+
+      // Add event listeners for date calculation
+      document.getElementById('fromDate').addEventListener('change', calculateDays);
+      document.getElementById('toDate').addEventListener('change', calculateDays);
+
+      // Set minimum date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('fromDate').setAttribute('min', today);
+      document.getElementById('toDate').setAttribute('min', today);
+
+      // Update minimum to date based on from date
+      document.getElementById('fromDate').addEventListener('change', function () {
+        const fromDate = this.value;
+        document.getElementById('toDate').setAttribute('min', fromDate);
+        calculateDays();
+      });
+
+      // Submit leave application
+      function submitLeaveApplication(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const leaveData = {
+          leave_type: formData.get('leaveType'),
+          start_date: formData.get('fromDate'),
+          end_date: formData.get('toDate'),
+          reason: formData.get('reason')
+        };
+
+        fetch('{% url "apply_leave" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify(leaveData)
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('successModal').classList.remove('hidden');
+              event.target.reset();
+              document.getElementById('numberOfDays').value = '';
+              // Reload page after 2 seconds to show new leave
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            } else {
+              alert('Error: ' + data.message);
+            }
+          });
+      }
+
+      // Add approve/reject function
+      function approveLeave(leaveId, status) {
+        if (!confirm(`Are you sure you want to ${status} this leave?`)) return;
+
+        fetch(`/leaves/approve/${leaveId}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({
+            status: status,
+            comments: ''
+          })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert(data.message);
+              window.location.reload();
+            } else {
+              alert('Error: ' + data.message);
+            }
+          });
+      }
+
+      document.querySelector('form').addEventListener('submit', submitLeaveApplication);
+
+      // Reset form
+      function resetForm() {
+        document.getElementById('numberOfDays').value = '';
+      }
+      window.resetForm = resetForm;
+
+      // Close success modal
+      function closeSuccessModal() {
+        document.getElementById('successModal').classList.add('hidden');
+      }
+      window.closeSuccessModal = closeSuccessModal;
+
+      // Close modal when clicking outside
+      document.getElementById('successModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeSuccessModal();
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !document.getElementById('successModal').classList.contains('hidden')) {
+          closeSuccessModal();
+        }
+      });
+
+      // Add animation to form toggle
+      const leaveForm = document.getElementById('leaveForm');
+      leaveForm.style.transition = 'all 0.3s ease-in-out';
+    });
+
+    // Add CSRF token function if not already there
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Approve/Reject leave function
+function approveLeave(leaveId, status) {
+    if (!confirm(`Are you sure you want to ${status} this leave?`)) return;
+    
+    fetch(`/leaves/approve/${leaveId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            status: status,
+            comments: ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+  </script>
+  <script src="{% static 'js/auth.js' %}"></script>
+
+</body>
+
+</html>

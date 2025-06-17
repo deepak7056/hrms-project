@@ -1,0 +1,409 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRMS Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <!-- Header -->
+  <header
+    class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-10 py-4 bg-white shadow-lg border-b border-blue-100">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+        <i class="fas fa-building text-white text-lg"></i>
+      </div>
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">INDIA
+        COE TOOL</h1>
+    </div>
+    <div class="flex items-center gap-4">
+  <div class="text-right">
+    <p class="text-sm font-medium text-gray-700">Welcome Back</p>
+    <p class="text-xs text-gray-500">{{ user.get_full_name|default:user.username }} - {{ user.get_role_display|default:'User' }}</p>
+  </div>
+  <img src="{% static 'images/download.jpg' %}" alt="Profile" class="rounded-full w-10 h-10 border-2 border-blue-200 shadow-md" />
+</div>
+  </header>
+
+  <div class="flex pt-20 min-h-screen">
+    <!-- Sidebar -->
+    <aside
+      class="w-64 bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white p-6 flex flex-col justify-between shadow-2xl">
+      <div>
+        <nav class="space-y-3 text-base">
+          <a href="{% url 'index' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200 bg-white/5">
+            <i class="fas fa-tachometer-alt w-5"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="{% url 'today_reports' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-home w-5"></i>
+            <span>Today Reports</span>
+          </a>
+          <a href="{% url 'analytics' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-chart-bar w-5"></i>
+            <span>Analytics Today Tasks</span>
+          </a>
+          <a href="{% url 'leave_list' %}"
+            class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+            <i class="fas fa-users w-5"></i>
+            <span>Apply Leave</span>
+          </a>
+          {% if user.role == 'admin' %}
+      <a href="{% url 'upload_report' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200">
+        <i class="fas fa-upload w-5"></i>
+        <span>Upload Report</span>
+      </a>
+      {% endif %}
+        </nav>
+      </div>
+      <div class="text-sm text-blue-200 border-t border-blue-700 pt-4">
+        <p>© 2025 HRMS v2.0</p>
+        <p class="text-xs opacity-75">Enhanced Dashboard</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-2 m-4 overflow-y-auto">
+      <div class="max-w-1xl mx-auto">
+        <!-- DEBUG - Remove after testing -->
+
+
+        <!-- CEO/Admin Level -->
+{% if admins %}
+{% for admin in admins %}
+<div class="flex justify-center mb--6">
+  <div onclick="openModal('{{ admin.role }}{{ admin.id }}')"
+ class="cursor-pointer group">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-6 rounded-xl text-white">
+      <div class="flex items-center gap-4 mb--3">
+        <img src="{% static 'images/download.jpg' %}" alt="Profile"
+          class="w-16 h-16 rounded-full border-3 border-white">
+        <div>
+          <h2 class="text-2xl font-bold text-white">{{ admin.get_full_name }}</h2>
+          <p class="text-blue-100">{{ admin.get_role_display }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Connecting Line -->
+<div class="flex justify-center mb-4">
+  <div class="w-px h-2 bg-gradient-to-b from-blue-400 to-transparent"></div>
+</div>
+
+<!-- Department Structure -->
+<div class="grid grid-cols-3 gap-4">
+  <!-- PDM Department -->
+  {% with dept=department_hierarchy.PDM %}
+  {% if dept.manager or dept.employees %}
+  <div class="bg-white/70 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white/50">
+    <div class="text-center mb-3">
+      <div class="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-1.5 rounded-full shadow-md">
+        <i class="fas fa-chart-line text-sm"></i>
+        <h2 class="text-sm font-bold">PDM</h2>
+      </div>
+    </div>
+
+    <!-- Manager -->
+    {% if dept.manager %}
+    <div onclick="openModal('manager{{ dept.manager.id }}')" class="cursor-pointer mb-3">
+      <div class="bg-gradient-to-r from-green-400 to-teal-400 p-2.5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 text-white">
+        <div class="flex items-center gap-2">
+          <img src="{% static 'images/download.jpg' %}" class="w-8 h-8 rounded-full object-cover border-2 border-green-400" />
+          <div>
+            <h3 class="text-sm font-bold">{{ dept.manager.get_full_name }}</h3>
+            <p class="text-xs text-green-100">{{ dept.manager.designation|default:"PDM Manager" }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Team Members -->
+    <div class="space-y-1.5 ml-4">
+      {% for employee in dept.employees %}
+      <div onclick="openModal('{{ employee.role }}{{ employee.id }}')"
+ class="cursor-pointer">
+        <div class="bg-white p-2 rounded-md shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200 border-l-3 border-green-400">
+          <div class="flex items-center gap-2">
+            <img src="{% static 'images/download.jpg' %}" class="w-8 h-8 rounded-full object-cover border-2 border-green-400" />
+            <h4 class="text-xs font-medium text-gray-800">{{ employee.get_full_name }}</h4>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- Analytics & Development Department -->
+  {% with dept=department_hierarchy.Analytics %}
+  {% if dept.manager or dept.employees %}
+  <div class="bg-white/70 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white/50">
+    <div class="text-center mb-3">
+      <div class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-1.5 rounded-full shadow-md">
+        <i class="fas fa-code text-sm"></i>
+        <h2 class="text-sm font-bold">Analytics & Development</h2>
+      </div>
+    </div>
+
+    <!-- Manager -->
+    {% if dept.manager %}
+    <div onclick="openModal('manager{{ dept.manager.id }}')" class="cursor-pointer mb-3">
+      <div class="bg-gradient-to-r from-blue-400 to-indigo-400 p-2.5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 text-white">
+        <div class="flex items-center gap-2">
+          <img src="{% static 'images/download.jpg' %}" class="w-8 h-8 rounded-full object-cover border-2 border-green-400" />
+          <div>
+            <h3 class="text-sm font-bold">{{ dept.manager.get_full_name }}</h3>
+            <p class="text-xs text-blue-100">Analytics Manager</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Team Members -->
+    <div class="space-y-1.5 ml-4">
+      {% for employee in dept.employees %}
+      <div onclick="openModal('{{ employee.role }}{{ employee.id }}')"
+ class="cursor-pointer">
+        <div class="bg-white p-2 rounded-md shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200 border-l-3 border-blue-400">
+          <div class="flex items-center gap-2">
+            <img src="{% static 'images/download.jpg' %}" class="w-8 h-8 rounded-full object-cover border-2 border-green-400" />
+            <h4 class="text-xs font-medium text-gray-800">{{ employee.get_full_name }}</h4>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- Order Management & Price Setup Department -->
+  {% with dept=department_hierarchy.Order_Management %}
+  {% if dept.manager or dept.employees %}
+  <div class="bg-white/70 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white/50">
+    <div class="text-center mb-3">
+      <div class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1.5 rounded-full shadow-md">
+        <i class="fas fa-shopping-cart text-sm"></i>
+        <h2 class="text-sm font-bold">Order Mgmt & Price Setup</h2>
+      </div>
+    </div>
+
+    <!-- Manager -->
+    {% if dept.manager %}
+    <div onclick="openModal('manager{{ dept.manager.id }}')" class="cursor-pointer mb-3">
+      <div class="bg-gradient-to-r from-purple-400 to-pink-400 p-2.5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 text-white">
+        <div class="flex items-center gap-2">
+          <img src="{% static 'images/download.jpg' %}" class="w-8 h-8 rounded-full object-cover border-2 border-green-400" />
+          <div>
+            <h3 class="text-sm font-bold">{{ dept.manager.get_full_name }}</h3>
+            <p class="text-xs text-purple-100">Order Manager</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Team Members Grid -->
+    <div class="grid grid-cols-2 gap-1 ml-2">
+      {% for employee in dept.employees %}
+      <div onclick="openModal('{{ employee.role }}{{ employee.id }}')"
+ class="cursor-pointer">
+        <div class="bg-white p-1.5 rounded-md shadow-sm hover:shadow-md transition-all duration-200 border-l-2 border-purple-400">
+          <div class="flex items-center gap-1">
+            <img src="{% static 'images/download.jpg' %}" class="w-8 h-8 rounded-full object-cover border-2 border-green-400" />
+            <h4 class="text-xs font-medium text-gray-800">{{ employee.get_full_name }}</h4>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+</div>
+        <!-- Stats Cards -->
+        <!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+  <div class="bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-white/50">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+        <i class="fas fa-users text-blue-600 text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-800">{{ all_users.count }}</p>
+        <p class="text-xs text-gray-600">Total Employees</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-white/50">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+        <i class="fas fa-building text-green-600 text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-800">3</p>
+        <p class="text-xs text-gray-600">Departments</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-white/50">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+        <i class="fas fa-user-tie text-purple-600 text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-800">{{ managers.count }}</p>
+        <p class="text-xs text-gray-600">Managers</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-white/50">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+        <i class="fas fa-chart-line text-yellow-600 text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-800">95%</p>
+        <p class="text-xs text-gray-600">Efficiency</p>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Enhanced Modal -->
+  <div id="employeeModal"
+    class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div
+      class="bg-white rounded-2xl p-6 w-80 relative shadow-2xl border border-gray-100 transform transition-all duration-300 scale-95 opacity-0"
+      id="modalContent">
+      <button onclick="closeModal()"
+        class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-all duration-200">&times;</button>
+
+      <div class="text-center">
+        <div class="relative inline-block mb-5">
+          <img id="modalPhoto" class="w-20 h-20 rounded-full mx-auto border-4 border-white shadow-xl" alt="Profile" />
+          <div
+            class="absolute -bottom-2 -right-2 w-7 h-7 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
+            <i class="fas fa-check text-white text-xs"></i>
+          </div>
+        </div>
+
+        <h3 id="modalName" class="text-xl font-bold text-gray-800 mb-2"></h3>
+        <div id="modalRole"
+          class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mb-4"></div>
+
+        <div class="space-y-3 text-left bg-gray-50 rounded-xl p-4 mb-5">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-id-badge text-gray-500 w-4"></i>
+            <span id="modalID" class="text-sm text-gray-700"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i class="fas fa-envelope text-gray-500 w-4"></i>
+            <span id="modalEmail" class="text-sm text-gray-700"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i class="fas fa-building text-gray-500 w-4"></i>
+            <span id="modalDept" class="text-sm text-gray-700"></span>
+          </div>
+        </div>
+
+        <a id="modalTwitter" href="#" target="_blank"
+          class="flex items-center justify-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition-colors duration-200">
+          <i class="fab fa-twitter"></i>
+          <span class="text-sm">Twitter</span>
+        </a>
+      </div>
+    </div>
+  </div>
+<script>
+  const employees = {
+    {% for user in all_users %}
+      "{{ user.role }}{{ user.id }}": {
+        name: "{{ user.get_full_name|escapejs }}",
+        role: "{{ user.get_role_display|escapejs }}",
+        id: "{{ user.employee_id|default:user.id|escapejs }}",
+        email: "{{ user.email|default:"not available" }}",
+        dept: "{{ user.department|escapejs }}",
+        photo: "{% static 'images/download.jpg' %}",  // or user.photo if available
+        headerPhoto: "{% static 'images/download.jpg' %}"
+      }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  };
+</script>
+
+  <script>
+    function openModal(key) {
+      const emp = employees[key];
+      const modal = document.getElementById('employeeModal');
+      const modalContent = document.getElementById('modalContent');
+
+      document.getElementById('modalPhoto').src = emp.photo;
+      document.getElementById('modalName').innerText = emp.name;
+      document.getElementById('modalRole').innerText = emp.role;
+      document.getElementById('modalID').innerText = `ID: ${emp.id}`;
+      document.getElementById('modalEmail').innerText = `${emp.email}`;
+      document.getElementById('modalDept').innerText = `${emp.dept}`;
+      document.getElementById('modalTwitter').href = emp.twitter;
+
+      modal.classList.remove('hidden');
+
+      // Animate modal entrance
+      setTimeout(() => {
+        modalContent.style.transform = 'scale(1)';
+        modalContent.style.opacity = '1';
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('employeeModal');
+      const modalContent = document.getElementById('modalContent');
+
+      // Animate modal exit
+      modalContent.style.transform = 'scale(0.95)';
+      modalContent.style.opacity = '0';
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('employeeModal').addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !document.getElementById('employeeModal').classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+  </script>
+  <script src="{% static 'js/auth.js' %}"></script>
+
+</body>
+
+</html>
