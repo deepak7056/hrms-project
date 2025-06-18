@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-unique-se
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']  # We'll update this later with your Railway URL
+ALLOWED_HOSTS = ['web-production-cb3d.up.railway.app', 'localhost', '127.0.0.1'] # We'll update this later with your Railway URL
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,7 +42,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://web-production-cb3d.up.railway.app']
 
 ROOT_URLCONF = 'employee_management.urls'
 
