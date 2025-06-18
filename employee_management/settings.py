@@ -140,3 +140,13 @@ if 'mysql' in DATABASES['default']['ENGINE']:
         'connect_timeout': 28,
         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
     }
+
+# Session settings
+SESSION_COOKIE_AGE = 3600  # 1 hour in seconds (60 * 60)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True  # This refreshes the session on every request
+
+# Security settings for production
+SESSION_COOKIE_SECURE = True  # Only send cookie over HTTPS
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie
+CSRF_COOKIE_SECURE = True  # Only send CSRF cookie over HTTPS
