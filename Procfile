@@ -1,1 +1,1 @@
-web: python manage.py collectstatic --noinput && gunicorn employee_management.wsgi --bind 0.0.0.0:$PORT
+web: python manage.py migrate --noinput || echo "Migration failed" && python manage.py collectstatic --noinput && gunicorn employee_management.wsgi --bind 0.0.0.0:$PORT --timeout 120
