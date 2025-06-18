@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'leaves',
     'tasks',
     'reports',
-    'rest_framework',  # For APIs
+  #  'rest_framework',  # For APIs
 ]
 
 MIDDLEWARE = [
