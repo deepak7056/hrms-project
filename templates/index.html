@@ -24,21 +24,44 @@
       <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">INDIA
         COE TOOL</h1>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4 relative">
   <div class="text-right">
     <p class="text-sm font-medium text-gray-700">Welcome Back</p>
     <p class="text-xs text-gray-500">{{ user.get_full_name|default:user.username }} - {{ user.get_role_display|default:'User' }}</p>
   </div>
-  <img src="{% static 'images/download.jpg' %}" alt="Profile" class="rounded-full w-10 h-10 border-2 border-blue-200 shadow-md" />
+  
+  <!-- Profile Image with Dropdown Trigger -->
+  <div class="relative">
+    <button onclick="toggleProfileDropdown()" class="flex items-center focus:outline-none">
+      <img src="{% static 'images/download.jpg' %}" alt="Profile" 
+           class="rounded-full w-10 h-10 border-2 border-blue-200 shadow-md hover:border-blue-400 transition-all cursor-pointer" />
+    </button>
+    
+    <!-- Dropdown Menu -->
+    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
+      <div class="px-4 py-2 border-b border-gray-200">
+        <p class="text-sm font-semibold text-gray-800">{{ user.get_full_name|default:user.username }}</p>
+        <p class="text-xs text-gray-500">{{ user.email }}</p>
+      </div>
+      
+      <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+        <i class="fas fa-user mr-2"></i> My Profile
+      </a>
+      
+      <a href="/logout/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+      </a>
+    </div>
+  </div>
 </div>
   </header>
 
-  <div class="flex pt-20 min-h-screen">
+  <div class="flex h-screen">
     <!-- Sidebar -->
     <aside
-      class="w-64 bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white p-6 flex flex-col justify-between shadow-2xl">
-      <div>
-        <nav class="space-y-3 text-base">
+      class="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white flex flex-col shadow-2xl z-30">
+      <div class="pt-20 flex-1 overflow-y-auto">
+        <nav class="p-4 space-y-2">
           <a href="{% url 'index' %}"
             class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-all duration-200 bg-white/5">
             <i class="fas fa-tachometer-alt w-5"></i>
@@ -67,14 +90,14 @@
       {% endif %}
         </nav>
       </div>
-      <div class="text-sm text-blue-200 border-t border-blue-700 pt-4">
+      <div class="p-4 text-sm text-blue-200 border-t border-blue-700">
         <p>© 2025 HRMS v2.0</p>
         <p class="text-xs opacity-75">Enhanced Dashboard</p>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-2 m-4 overflow-y-auto">
+    <main class="flex-1 ml-64 pt-20 p-6 overflow-y-auto">
       <div class="max-w-1xl mx-auto">
         <!-- DEBUG - Remove after testing -->
 
@@ -82,10 +105,10 @@
         <!-- CEO/Admin Level -->
 {% if admins %}
 {% for admin in admins %}
-<div class="flex justify-center mb--6">
+<div class="flex justify-center mb--60">
   <div onclick="openModal('{{ admin.role }}{{ admin.id }}')"
  class="cursor-pointer group">
-    <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-6 rounded-xl text-white">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl text-white">
       <div class="flex items-center gap-4 mb--3">
         <img src="{% static 'images/download.jpg' %}" alt="Profile"
           class="w-16 h-16 rounded-full border-3 border-white">
@@ -402,6 +425,30 @@
       }
     });
   </script>
+  <script>
+  // Profile dropdown functionality
+  function toggleProfileDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.classList.toggle('hidden');
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profileButton = event.target.closest('button[onclick="toggleProfileDropdown()"]');
+    
+    if (!profileButton && !dropdown.contains(event.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  // Close dropdown with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('profileDropdown').classList.add('hidden');
+    }
+  });
+</script>
   <script src="{% static 'js/auth.js' %}"></script>
 
 </body>

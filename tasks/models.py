@@ -25,18 +25,17 @@ class Task(models.Model):
         ('completed', 'Completed'),
     )
     
-    report = models.ForeignKey(DailyTaskReport, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
-    original_data = models.JSONField(default=dict)
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='self_assigned_tasks')
+    report = models.ForeignKey(DailyTaskReport, on_delete=models.CASCADE, related_name='tasks',null=True, blank=True)
+    original_data = models.JSONField()
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_tasks')
     self_assigned_date = models.DateTimeField(null=True, blank=True)
-    
-    # Add these new fields
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    excel_assigned_to = models.CharField(max_length=255, null=True, blank=True)  # Store the name from Excel
+    status = models.CharField(max_length=50, default='pending')
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     
     class Meta:
-        db_table = 'tasks'
+        ordering = ['-id']
     
     def __str__(self):
         return f"Task from report {self.report.id}"

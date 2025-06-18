@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - HRMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <!-- Simple Header -->
+  <header class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-10 py-4 bg-white shadow-lg border-b border-blue-100">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+        <i class="fas fa-building text-white text-lg"></i>
+      </div>
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">INDIA COE TOOL</h1>
+    </div>
+  </header>
+
+  <div class="pt-20 p-8">
+    <div class="max-w-2xl mx-auto">
+      <!-- Back Button -->
+      <a href="{% url 'index' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+      </a>
+      
+      <!-- Profile Card -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-2xl font-bold mb-6">My Profile</h1>
+        
+        <div class="flex items-start gap-6 mb-6">
+          <img src="{% static 'images/download.jpg' %}" alt="Profile" 
+               class="w-24 h-24 rounded-full border-4 border-blue-200">
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold">{{ user.get_full_name|default:user.username }}</h2>
+            <p class="text-gray-600">{{ user.email }}</p>
+          </div>
+        </div>
+        
+        <!-- Profile Information Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gray-50 p-4 rounded">
+            <p class="text-sm text-gray-600">Username</p>
+            <p class="font-medium">{{ user.username }}</p>
+          </div>
+          
+          <div class="bg-gray-50 p-4 rounded">
+            <p class="text-sm text-gray-600">Email</p>
+            <p class="font-medium">{{ user.email|default:"Not provided" }}</p>
+          </div>
+          
+          <div class="bg-gray-50 p-4 rounded">
+            <p class="text-sm text-gray-600">Full Name</p>
+            <p class="font-medium">{{ user.first_name }} {{ user.last_name }}</p>
+          </div>
+          
+          <div class="bg-gray-50 p-4 rounded">
+            <p class="text-sm text-gray-600">Date Joined</p>
+            <p class="font-medium">{{ user.date_joined|date:"F d, Y" }}</p>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="mt-6 flex gap-4">
+          <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+            <i class="fas fa-edit mr-2"></i> Edit Profile
+          </button>
+          <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition-colors">
+            <i class="fas fa-key mr-2"></i> Change Password
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

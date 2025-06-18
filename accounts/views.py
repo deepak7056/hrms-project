@@ -5,6 +5,9 @@ from django.contrib import messages
 from .models import User
 
 @login_required
+def profile_view(request):
+    return render(request, 'profile.html', {'user': request.user})
+
 def index(request):
     all_users = User.objects.all().select_related('manager')
     
