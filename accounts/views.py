@@ -3,6 +3,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 @login_required
 def profile_view(request):
@@ -76,3 +79,15 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')  # This is the correct simple logout
+
+def initialize_admin(request):
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='Admin@123456'
+        )
+        return render(request, 'admin_created.html', {
+            'message': 'Admin user created! Username: admin, Password: Admin@123456'
+        })
+    return redirect('login')
