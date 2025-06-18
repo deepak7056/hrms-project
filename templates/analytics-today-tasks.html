@@ -9,6 +9,42 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    /* Sticky first column */
+.sticky-table {
+    position: relative;
+}
+
+.sticky-table thead th:first-child,
+.sticky-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background-color: white;
+}
+
+.sticky-table thead th:first-child {
+    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+    z-index: 11;
+}
+
+.sticky-table tbody td:first-child {
+    background-color: #f9fafb;
+    border-right: 2px solid #e5e7eb;
+}
+
+/* Add shadow when scrolling */
+.sticky-table tbody td:first-child::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -5px;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+}
+</style>
 </head>
 
 <body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -167,7 +203,7 @@
         <!-- Tasks Table -->
 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
   <div class="overflow-x-auto" style="max-height: calc(100vh - 300px); overflow-y: auto;">
-    <table class="w-full">
+    <table class="w-full sticky-table">
       <thead id="taskTableHeader" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white sticky top-0 z-10">
         <!-- Headers will be populated dynamically -->
       </thead>

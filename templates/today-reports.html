@@ -17,6 +17,40 @@
       position: relative;
     }
 
+    /* Sticky first column */
+.sticky-table {
+    position: relative;
+}
+
+.sticky-table thead th:first-child,
+.sticky-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background-color: white;
+}
+
+.sticky-table thead th:first-child {
+    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+    z-index: 11;
+}
+
+.sticky-table tbody td:first-child {
+    background-color: #f9fafb;
+    border-right: 2px solid #e5e7eb;
+}
+
+/* Add shadow when scrolling */
+.sticky-table tbody td:first-child::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -5px;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+}
+
     #tableHeader {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -152,7 +186,7 @@
 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
   <div class="overflow-x-auto" style="max-height: calc(100vh - 200px); position: relative;">
     {% if tasks %}
-    <table class="w-full compact-table">
+    <table class="w-full compact-table sticky-table">
       <thead id="tableHeader" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white sticky top-0 z-30 shadow-lg">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">S.No</th>
