@@ -1,1 +1,3 @@
-web: python manage.py collectstatic --noinput && python manage.py migrate --noinput || true && gunicorn employee_management.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate --noinput && python manage.py create_admin && python manage.py 
+collectstatic --noinput && gunicorn employee_management.wsgi:application --bind 
+0.0.0.0:$PORT
